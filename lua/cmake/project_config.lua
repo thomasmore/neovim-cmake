@@ -1,5 +1,4 @@
 local config = require('cmake.config')
-local os = require('ffi').os:lower()
 local utils = require('cmake.utils')
 local scandir = require('plenary.scandir')
 local Path = require('plenary.path')
@@ -33,8 +32,9 @@ function ProjectConfig:get_build_dir()
     return self.build_dir
   end
   self.build_dir = config.build_dir
-  self.build_dir = self.build_dir:gsub('{cwd}', vim.loop.cwd())
-  self.build_dir = self.build_dir:gsub('{os}', os)
+  local cwd = vim.loop.cwd()
+  self.build_dir = self.build_dir:gsub('{cwd}', cwd)
+  self.build_dir = self.build_dir:gsub('{cwd_base}', vim.fn.fnamemodify(cwd, ':t'))
   self.build_dir = self.build_dir:gsub('{build_type}', self.json.build_type:lower())
   self.build_dir = Path:new(self.build_dir)
   return self.build_dir

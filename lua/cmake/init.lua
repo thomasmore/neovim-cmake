@@ -41,13 +41,14 @@ end
 
 function cmake.run(...)
   local project_config = ProjectConfig.new()
+  local build_dir = project_config:get_build_dir().filename
   local target_dir, target, target_args = project_config:get_current_target()
   if not target_dir or not target then
     return
   end
 
   vim.list_extend(target_args, { ... })
-  return utils.run(target.filename, target_args, { cwd = target_dir.filename, force_quickfix = true })
+  return utils.run(target.filename, target_args, { cwd = build_dir, force_quickfix = true })
 end
 
 function cmake.debug(...)
@@ -81,7 +82,7 @@ function cmake.debug(...)
     name = project_config.json.current_target,
     program = target.filename,
     args = target_args,
-    cwd = target_dir.filename,
+    cwd = project_config:get_build_dir().filename,
   }
 
   require('dap').run(vim.tbl_extend('force', base_dap_config, dap_config))
